@@ -18,9 +18,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ZeroBin — Doorstep Waste Pickup, Madurai",
+  title: "ZeroBin — Doorstep Waste Pickup in Madurai",
   description:
-    "Doorstep pickup for dry, wet & e-waste. Madurai's cleanest habit. Book your pickup in seconds.",
+    "Book doorstep pickup for dry, wet & e-waste in Madurai. Rider arrives at your door.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

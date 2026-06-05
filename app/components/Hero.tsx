@@ -133,8 +133,8 @@ export function Hero() {
                 {["Waste", "out,"].map((word, i) => (
                   <motion.span
                     key={word}
-                    initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.35 + i * 0.08, duration: 0.5, ease: "easeOut" }}
                     style={{ display: "inline-block", marginRight: "0.3em" }}
                   >
@@ -145,8 +145,8 @@ export function Hero() {
                 {["city", "clean."].map((word, i) => (
                   <motion.span
                     key={word}
-                    initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.51 + i * 0.08, duration: 0.5, ease: "easeOut" }}
                     style={{
                       display: "inline-block",
@@ -260,23 +260,35 @@ export function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Right: phone mockup */}
+          {/* Right: phone mockup — perspective wrapper is static CSS (no FM conflict) */}
           <div className="flex justify-center lg:justify-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: [30, 0, -12, 0] }}
-              transition={{
-                opacity: { duration: 0.8, delay: 0.4 },
-                y: { times: [0, 0.15, 0.57, 1], duration: 4, repeat: Infinity, ease: "easeInOut" },
-              }}
+            <div
+              className="phone-mockup"
               style={{
                 maxWidth: 320,
                 transform: "perspective(900px) rotateY(-8deg) rotateX(3deg)",
                 filter: "drop-shadow(0 24px 48px rgba(0,200,83,0.15)) drop-shadow(0 8px 24px rgba(0,0,0,0.4))",
+                willChange: "transform",
               }}
             >
-              <PhoneMockup />
-            </motion.div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, y: [0, -14, 0] }}
+                transition={{
+                  opacity: { duration: 0.8, delay: 0.4 },
+                  y: {
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: [0.45, 0, 0.55, 1] as const,
+                    repeatType: "loop" as const,
+                    delay: 0.8,
+                  },
+                }}
+                style={{ willChange: "transform" }}
+              >
+                <PhoneMockup />
+              </motion.div>
+            </div>
           </div>
         </div>
       </div>

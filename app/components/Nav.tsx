@@ -7,10 +7,14 @@ import { useTheme } from "next-themes";
 
 /* ─── Logo ─────────────────────────────────────────────────── */
 function ZeroBinLogo() {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const textColor = !mounted || resolvedTheme === "dark" ? "#e8f5e9" : "#0a1a0c";
+
   return (
-    <svg width="160" height="32" viewBox="0 0 160 32"
+    <svg width="148" height="32" viewBox="0 0 148 32"
       fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="ZeroBin">
-      {/* Bin icon */}
       <rect x="5" y="8" width="18" height="17" rx="2.5"
         stroke="#00c853" strokeWidth="1.5" />
       <path d="M3 8 L26 8" stroke="#00c853"
@@ -27,14 +31,13 @@ function ZeroBinLogo() {
       <line x1="19" y1="12" x2="19" y2="21"
         stroke="#00c853" strokeWidth="1.2"
         strokeLinecap="round" opacity=".5" />
-      {/* Wordmark — hardcoded hex, CSS vars don't apply inside SVG text */}
-      <text x="38" y="23"
+      <text x="36" y="23"
         fontFamily="Inter, sans-serif"
         fontSize="17"
-        fill="#e8f5e9"
+        fill={textColor}
         fontWeight="600"
         letterSpacing="-0.6">Zero</text>
-      <text x="84" y="23"
+      <text x="82" y="23"
         fontFamily="Inter, sans-serif"
         fontSize="17"
         fill="#00c853"
@@ -54,7 +57,7 @@ function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200"
+      className="w-9 h-9 rounded-lg flex items-center justify-center"
       style={{
         border: "1px solid var(--border)",
         background: "var(--bg-surface)",
@@ -91,8 +94,12 @@ export function Nav() {
   const [atTop, setAtTop] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const lastY = useRef(0);
   const { scrollY } = useScroll();
+  const { resolvedTheme } = useTheme();
+
+  useEffect(() => setMounted(true), []);
 
   useMotionValueEvent(scrollY, "change", (y) => {
     setAtTop(y < 20);
@@ -110,9 +117,7 @@ export function Nav() {
       const el = document.getElementById(id);
       if (!el) return;
       const obs = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) setActiveSection(id);
-        },
+        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
         { threshold: 0.25, rootMargin: "-80px 0px -40% 0px" }
       );
       obs.observe(el);
@@ -121,6 +126,23 @@ export function Nav() {
 
     return () => observers.forEach((obs) => obs.disconnect());
   }, []);
+
+  const isLight = mounted && resolvedTheme === "light";
+
+  const navBg = atTop
+    ? "transparent"
+    : isLight
+    ? "rgba(244, 248, 244, 0.90)"
+    : "rgba(13, 31, 15, 0.85)";
+
+  const navBorder = atTop
+    ? "none"
+    : isLight
+    ? "1px solid rgba(0, 0, 0, 0.06)"
+    : "1px solid var(--border)";
+
+  const linkColor = isLight ? "#2a4a2e" : "var(--text-muted)";
+  const linkHoverColor = isLight ? "#0a1a0c" : "var(--text-primary)";
 
   return (
     <motion.nav
@@ -131,13 +153,11 @@ export function Nav() {
       <div
         className="max-w-6xl mx-auto flex items-center justify-between rounded-2xl px-6 py-3"
         style={{
-          background: atTop
-            ? "transparent"
-            : "rgba(13, 31, 15, 0.85)",
-          backdropFilter: atTop ? "none" : "blur(20px)",
-          WebkitBackdropFilter: atTop ? "none" : "blur(20px)",
-          border: atTop ? "none" : "1px solid var(--border)",
-          transition: "all 0.4s ease",
+          background: navBg,
+          backdropFilter: atTop ? "none" : "blur(12px)",
+          WebkitBackdropFilter: atTop ? "none" : "blur(12px)",
+          border: navBorder,
+          transition: "background 0.4s ease, border 0.4s ease",
         }}
       >
         {/* Logo */}
@@ -153,14 +173,10 @@ export function Nav() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-sm font-medium transition-colors duration-200 relative"
-                style={{ color: isActive ? "#00c853" : "var(--text-muted)" }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = "var(--text-primary)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = isActive ? "#00c853" : "var(--text-muted)")
-                }
+                className="text-sm font-medium relative"
+                style={{ color: isActive ? "#00c853" : linkColor }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = linkHoverColor)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = isActive ? "#00c853" : linkColor)}
               >
                 {link.label}
                 {isActive && (
@@ -182,7 +198,7 @@ export function Nav() {
             href="https://play.google.com/store/apps/details?id=com.zerobin.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold"
             style={{
               background: "#00c853",
               color: "#050a06",
@@ -190,13 +206,11 @@ export function Nav() {
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.background = "#1ddb6a";
-              (e.currentTarget as HTMLElement).style.boxShadow =
-                "0 6px 24px rgba(0, 200, 83, 0.42)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 24px rgba(0, 200, 83, 0.42)";
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.background = "#00c853";
-              (e.currentTarget as HTMLElement).style.boxShadow =
-                "0 4px 16px rgba(0, 200, 83, 0.28)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(0, 200, 83, 0.28)";
             }}
           >
             <PlayCircle size={15} strokeWidth={2} />
@@ -208,7 +222,7 @@ export function Nav() {
         <div className="md:hidden flex items-center gap-2">
           <ThemeToggle />
           <button
-            className="p-2 rounded-xl transition-colors"
+            className="p-2 rounded-xl"
             style={{ color: "var(--text-primary)" }}
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Toggle menu"
@@ -224,7 +238,7 @@ export function Nav() {
           className="md:hidden max-w-6xl mx-auto mt-2 rounded-2xl px-6 py-5 flex flex-col gap-4"
           style={{
             background: "var(--bg-surface)",
-            backdropFilter: "blur(20px)",
+            backdropFilter: "blur(12px)",
             border: "1px solid var(--border)",
           }}
         >
