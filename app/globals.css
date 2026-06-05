@@ -1,26 +1,71 @@
 @import "tailwindcss";
 
+@theme {
+  --font-display: var(--font-playfair);
+  --font-body: var(--font-inter);
+}
+
+/* ─── Theme tokens ──────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* dark mode defaults */
+  --bg:           #0d1f0f;
+  --bg-alt:       #112014;
+  --bg-surface:   #132115;
+  --bg-elevated:  #1a2e1c;
+  --bg-deep:      #091508;
+
+  --text-primary:   #e8f5e9;
+  --text-muted:     #6a9b6e;
+  --text-highlight: #c8e6c8;
+
+  --border:        rgba(255, 255, 255, 0.09);
+  --border-accent: rgba(0, 200, 83, 0.15);
+  --border-hover:  rgba(0, 200, 83, 0.25);
+  --glow:          rgba(0, 200, 83, 0.10);
+
+  /* waste card gradients */
+  --card-dry-bg:    linear-gradient(135deg, #1f4020 0%, #142814 100%);
+  --card-wet-bg:    linear-gradient(135deg, #14382e 0%, #0c2820 100%);
+  --card-ewaste-bg: linear-gradient(135deg, #302e14 0%, #201e0a 100%);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.light {
+  --bg:           #f4f8f4;
+  --bg-alt:       #eef4ee;
+  --bg-surface:   #ffffff;
+  --bg-elevated:  #eaf2ea;
+  --bg-deep:      #e8f0e8;
+
+  --text-primary:   #0a1a0c;
+  --text-muted:     #4a6b4f;
+  --text-highlight: #2a5a2e;
+
+  --border:        rgba(0, 0, 0, 0.07);
+  --border-accent: rgba(0, 180, 83, 0.18);
+  --border-hover:  rgba(0, 180, 83, 0.3);
+  --glow:          rgba(0, 180, 83, 0.08);
+
+  --card-dry-bg:    linear-gradient(135deg, #e8f5e8 0%, #d4ead4 100%);
+  --card-wet-bg:    linear-gradient(135deg, #e0f5ef 0%, #c8ebe2 100%);
+  --card-ewaste-bg: linear-gradient(135deg, #f5f4e0 0%, #ece8c0 100%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Smooth theme transition ───────────────────────────────── */
+*, *::before, *::after {
+  transition:
+    background-color 0.3s ease,
+    color            0.2s ease,
+    border-color     0.2s ease;
+}
+
+/* ─── Base ──────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  overflow-x: hidden;
 }
